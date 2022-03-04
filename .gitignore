@@ -1,0 +1,11 @@
+.vim/view
+.vim/view/*
+.vim/.netrwhist
+.vim/plugged
+.vim/sessions
+.vim/*/doc/tags
+.vim/backup/*
+backup/
+*.zwc
+.config/zsh/cache/settings.zsh
+tags

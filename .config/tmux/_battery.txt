@@ -1,0 +1,1 @@
+#(cut -c3- ~/.tmux.conf | sh -s _battery)#{?@battery_indicator, #{@battery_indicator},} #{?@battery_percentage,#{@battery_percentage},}#[fg=colour16,bg=colour16,nobold,nounderscore,noitalics]
