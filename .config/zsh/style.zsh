@@ -38,7 +38,7 @@ FAST_HIGHLIGHT_STYLES[assign]='none'
 ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=214')
 
 # Sudo
-ZSH_HIGHLIGHT_PATTERNS+=('sudo ' 'fg=white,bold,bg=214'
+ZSH_HIGHLIGHT_PATTERNS+=('sudo ' 'fg=white,bold,bg=214')
 
 # autosuggestion highlight
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=4"
