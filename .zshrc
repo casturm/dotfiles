@@ -27,7 +27,6 @@ if ! zgenom saved; then
 	zgenom load zdharma-continuum/fast-syntax-highlighting
 	zgenom load zsh-users/zsh-history-substring-search
   zgenom load zsh-users/zsh-completions
-	#zgenom oh-my-zsh plugins/tmux
 	zgenom save
 fi
 

@@ -7,7 +7,7 @@ Currently working with the following versions.
 * `zsh` - 5.8
 * `tmux`- 3.8
 * `vim` - 8.2
-* `ruby`, `ruby-devel`, `python` and `python-pip` installed - if you wish to use Command-T plugin in vim
+* `ruby` - 2.7 - 3.1
 * [Powerline capable font](https://github.com/powerline/fonts)
 
 ## Installation
