@@ -1,3 +1,13 @@
+# PATTERNS
+# rm -rf
+ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=214')
+
+# Sudo
+ZSH_HIGHLIGHT_PATTERNS+=('sudo ' 'fg=white,bold,bg=214')
+
+# autosuggestion highlight
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=4"
+
 # Aliases and functions
 FAST_HIGHLIGHT_STYLES[alias]='fg=068'
 FAST_HIGHLIGHT_STYLES[function]='fg=028'
@@ -32,13 +42,3 @@ FAST_HIGHLIGHT_STYLES[commandseparator]='fg=214'
 FAST_HIGHLIGHT_STYLES[history-expansion]='fg=blue'
 
 FAST_HIGHLIGHT_STYLES[assign]='none'
-
-# PATTERNS
-# rm -rf
-ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=214')
-
-# Sudo
-ZSH_HIGHLIGHT_PATTERNS+=('sudo ' 'fg=white,bold,bg=214')
-
-# autosuggestion highlight
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=4"

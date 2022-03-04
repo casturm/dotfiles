@@ -21,18 +21,18 @@ compileAllTheThings () {
 	# zcompile .zshrc
 	zcompare ${ZDOTDIR:-${HOME}}/.zshrc
 
-	# Zgen
-	zgen_mods=${ZDOTDIR:-${HOME}}/.zgen/
-	zcompare ${zgen_mods}init.zsh
-	zcompare ${zgen_mods}zgen.zsh
-	# '/zdharma/'
-	for dir ('/zsh-users/' '/robbyrussell/oh-my-zsh-master/plugins/shrink-path/'); do
-		if [ -d "${zgen_mods}${dir}" ]; then
-			for file in ${zgen_mods}${dir}**/*.zsh; do
-				zcompare ${file}
-			done
-		fi
-	done
+	# # Zgen
+	# zgen_mods=${ZDOTDIR:-${HOME}}/.zgen/
+	# zcompare ${zgen_mods}init.zsh
+	# zcompare ${zgen_mods}zgen.zsh
+	# # '/zdharma/'
+	# for dir ('/zsh-users/' '/robbyrussell/oh-my-zsh-master/plugins/shrink-path/'); do
+	# 	if [ -d "${zgen_mods}${dir}" ]; then
+	# 		for file in ${zgen_mods}${dir}**/*.zsh; do
+	# 			zcompare ${file}
+	# 		done
+	# 	fi
+	# done
 }
 
 # Update dotfiles
@@ -62,7 +62,7 @@ recreateCachedSettingsFile() {
 	if [[ ! -s ${cachedSettingsFile} ]]; then
 		recreateCache=true
 	else
-		rcFiles=(${ZDOTDIR:-${HOME}}/.zgen/init.zsh)
+		rcFiles=(${ZDOTDIR:-${HOME}}/.zgenom/sources/init.zsh)
 		rcFiles+=(${ZDOTDIR:-${HOME}}/.config/zsh/*.zsh)
 		rcFiles+=(${ZDOTDIR:-${HOME}}/.secrets.zsh)
 		for rcFile in $rcFiles; do
@@ -75,12 +75,12 @@ recreateCachedSettingsFile() {
 		touch $cachedSettingsFile
 		echo "# This file is generated automatically, do not edit by hand!" > $cachedSettingsFile
 		echo "# Edit the files in ~/.config/zsh instead!" >> $cachedSettingsFile
-		# Zgen
-		if [[ -s ${ZDOTDIR:-${HOME}}/.zgen/init.zsh ]]; then
+		# Zgenom
+		if [[ -s ${ZDOTDIR:-${HOME}}/.zgenom/sources/init.zsh ]]; then
 			echo "#"              >> $cachedSettingsFile
-			echo "# Zgen:"        >> $cachedSettingsFile
+			echo "# Zgenom:"      >> $cachedSettingsFile
 			echo "#"              >> $cachedSettingsFile
-			cat ${ZDOTDIR:-${HOME}}/.zgen/init.zsh >> $cachedSettingsFile
+			cat ${ZDOTDIR:-${HOME}}/.zgenom/sources/init.zsh >> $cachedSettingsFile
 		fi
 		# Rc files
 		for rcFile in ${ZDOTDIR:-${HOME}}/.config/zsh/*.zsh; do

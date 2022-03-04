@@ -9,24 +9,26 @@ e_header()  { echo -e "\n\033[1m$@\033[0m"; }
 e_success() { echo -e " \033[1;32m✔\033[0m  $@"; }
 e_error()   { echo -e " \033[1;31m✖\033[0m  $@"; }
 
-# Load zgen only if a user types a zgen command
-zgen () {
-	if [[ ! -s ${ZDOTDIR:-${HOME}}/.zgen/zgen.zsh ]]; then
-		git clone --recursive https://github.com/tarjoilija/zgen.git ${ZDOTDIR:-${HOME}}/.zgen
+# Load zgenom only if a user types a zgenom command
+zgenom () {
+	if [[ ! -s ${ZDOTDIR:-${HOME}}/.zgenom/zgenom.zsh ]]; then
+		git clone https://github.com/jandamm/zgenom.git ${ZDOTDIR:-${HOME}}/.zgenom
 	fi
-	source ${ZDOTDIR:-${HOME}}/.zgen/zgen.zsh
-	zgen "$@"
+	source ${ZDOTDIR:-${HOME}}/.zgenom/zgenom.zsh
+	zgenom "$@"
 }
 
-# Generate zgen init script if needed
-if [[ ! -s ${ZDOTDIR:-${HOME}}/.zgen/init.zsh ]]; then
-	zgen load zsh-users/zsh-autosuggestions
-	# zgen load zdharma/fast-syntax-highlighting
-	zgen load zsh-users/zsh-history-substring-search
-	zgen oh-my-zsh plugins/shrink-path
-	#zgen oh-my-zsh plugins/tmux
-	zgen save
-	zcompile ${ZDOTDIR:-${HOME}}/.zgen/init.zsh
+# Generate zgenom init script if needed
+if ! zgenom saved; then
+	e_header "Creating zgenom save"
+	zgenom oh-my-zsh
+  zgenom oh-my-zsh plugins/shrink-path
+	zgenom load zsh-users/zsh-autosuggestions
+	zgenom load zdharma-continuum/fast-syntax-highlighting
+	zgenom load zsh-users/zsh-history-substring-search
+  zgenom load zsh-users/zsh-completions
+	#zgenom oh-my-zsh plugins/tmux
+	zgenom save
 fi
 
 # Load dircolors
@@ -45,11 +47,11 @@ if [[ ! -s ${ZDOTDIR:-${HOME}}/.config/zsh/cache/settings.zsh ]]; then
 fi
 source ${ZDOTDIR:-${HOME}}/.config/zsh/cache/settings.zsh
 
-# omz path
-export ZSH="$HOME/.oh-my-zsh"
-
 # theme settings
 ZSH_THEME="juanghurtado"
+
+# omz path
+export ZSH="$HOME/.oh-my-zsh"
 
 # source omz
 source $ZSH/oh-my-zsh.sh
