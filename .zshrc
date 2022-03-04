@@ -21,7 +21,6 @@ zgenom () {
 # Generate zgenom init script if needed
 if ! zgenom saved; then
 	e_header "Creating zgenom save"
-	zgenom oh-my-zsh
   zgenom oh-my-zsh plugins/shrink-path
 	zgenom load zsh-users/zsh-autosuggestions
 	zgenom load zdharma-continuum/fast-syntax-highlighting
