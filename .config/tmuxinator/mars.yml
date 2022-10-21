@@ -44,7 +44,7 @@ windows:
       root: ~/dev/flex_event_service
       layout: main-horizontal
       panes:
-        - vi .
+        - git status && vi .
         - cd ~/dev/mars_vagrant && vagrant up
   - nbx:
       root: ~/dev/nbx
