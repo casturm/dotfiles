@@ -118,6 +118,7 @@ set cmdheight=2        " Helps avoiding 'hit enter' prompt
 set magic              " Use some magic in search patterns
 set matchtime=2        " Show the match for n tenths of a second
 set noerrorbells       " Damn error bells!
+set visualbell         " Better than a beep
 set expandtab
 set number             " Show line numbers
 set copyindent
@@ -146,7 +147,6 @@ set ttyfast            " We're running on a fast terminal
 "  %    :  saves and restores the buffer list
 "  n... :  where to save the viminfo files
 set viminfo='10,\"100,:50,%,n~/.viminfo
-" set visualbell         " Better than a beep
 set nowrap             " Don't wrap long lines
 set whichwrap=<,>,h,l,~,[,]   " Left/right motion line wrap
 set wildmenu
@@ -183,6 +183,8 @@ if &term ==? 'xterm-256color' || &term ==? 'screen-256color-bce' || &term ==? 's
 else
 	colorscheme default
 endif
+
+set guifont=Menlo\ for\ Powerline
 
 " Map key to toggle opt - http://vim.wikia.com/wiki/Quick_generic_option_toggling
 function! MapToggle(key, opt)
@@ -434,3 +436,5 @@ map <leader>tb :TagbarToggle<cr>
 " autocmd FuncUndefined * exe 'runtime autoload/' . expand('<afile>') . '.vim'
 " map -a :call SyntaxAttr()<CR>
 
+" Remove trailing whitespace
+nnoremap <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
