@@ -48,10 +48,6 @@ Plug 'tpope/vim-bundler'
 " JSON
 Plug 'elzr/vim-json'
 
-" Haskell
-" Plug 'dag/vim2hs'
-" Plug 'lukerandall/haskellmode-vim'
-
 " Snippets
 Plug 'honza/vim-snippets'
 

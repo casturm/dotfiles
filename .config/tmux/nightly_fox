@@ -1,18 +1,24 @@
 # This tmux statusbar config was created by tmuxline.vim
 # on Thu, 30 Jan 2020
 
-set -g status-justify "left"
-set -g status "on"
-set -g status-left-style "none"
+set-window-option -g pane-base-index 1
+set -g base-index 1
+set -g pane-base-index 1
+set-option -g renumber-windows on
+set -g mode-style "fg=brightwhite,bg=colour60"
+set -g status-interval 1
+set -g status-justify left
+set -g status on
+set -g status-left-style default
 set -g message-command-style "fg=colour16,bg=colour231"
-set -g status-right-style "none"
+set -g status-right-style default
 set -g pane-active-border-style "fg=colour16"
 set -g status-style "none,bg=colour16"
 set -g message-style "fg=colour16,bg=colour231"
 set -g pane-border-style "fg=colour16"
-set -g status-right-length "100"
-set -g status-left-length "100"
-setw -g window-status-activity-style "none"
+set -g status-right-length 100
+set -g status-left-length 100
+# setw -g window-status-activity-style none
 setw -g window-status-separator ""
 setw -g window-status-style "none,fg=colour231,bg=colour16"
 set -g status-left "#[fg=colour198,bg=colour16] #S #[fg=colour16,bg=colour16,nobold,nounderscore,noitalics]"
