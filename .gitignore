@@ -11,4 +11,4 @@ backup/
 *.zwc
 .config/zsh/cache/settings.zsh
 .tags
-
+.credentials
