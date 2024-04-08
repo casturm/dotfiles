@@ -5,7 +5,10 @@
 .vim/sessions
 .vim/*/doc/tags
 .vim/backup/*
+.vim/undodir
+.vim/doc
 backup/
 *.zwc
 .config/zsh/cache/settings.zsh
-tags
+.tags
+

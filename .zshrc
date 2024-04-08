@@ -127,19 +127,6 @@ for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
 	alias "$method"="lwp-request -m '$method'"
 done
 
-# Tmux
-alias tmux="TERM=xterm-256color tmux"
-alias tx="tmuxinator"
-alias mx="tmuxinator start mars"
-
-# Vericity
-alias flex_db_prod='psql -h database.cisprod.vericity.net -d flex_event_service_v2 -U csturm --password'
-alias flex_db_int='psql -h database.marsint.vericity.net -d flex_event_service_v2 -U flex --password'
-alias flex_db_qa='psql -h database.marsqa.vericity.net -d flex_event_service_v2 -U flex --password'
-alias nbx_db_prod='psql -h database.cisprod.vericity.net -d nbx -U csturm --password'
-alias nbx_db_int='psql -h database.marsint.vericity.net -d nbx -U nbx --password'
-alias nbx_db_qa='psql -h database.marsqa.vericity.net -d nbx -U nbx --password'
-#
 # completions.zsh:
 #
 # Completion

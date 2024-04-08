@@ -55,9 +55,7 @@ for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
 done
 
 # Tmux
-alias tmux="TERM=xterm-256color tmux"
-alias tx="tmuxinator"
-alias mx="tmuxinator start mars"
+# alias tmux="TERM=xterm-256color tmux"
 
 # Vericity
 alias flex_db_int='psql -h database.marsint.vericity.net -d flex_event_service_v2 -U flex --password'
