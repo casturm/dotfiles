@@ -92,7 +92,7 @@ silent execute '!mkdir -p ~/.vim/backup'
 set grepprg=ack\ -k
 set backupdir=~/.vim/backup/
 set backupskip=/tmp/*,/private/tmp/*
-helptags ~/.vim/doc
+" helptags ~/.vim/doc
 set backup             " keep a backup file
 set cindent
 set complete=k,.,w,b,u,t,i

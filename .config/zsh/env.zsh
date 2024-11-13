@@ -34,4 +34,5 @@ export GPG_TTY=$(tty)
 export PGDATABASE=postgres
 
 path=(${HOME}/bin $path)
+path=(${HOME}/dev/uw/docker/web/sessionmanager-bundle/bin $path)
 export PATH

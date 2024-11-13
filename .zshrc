@@ -53,7 +53,7 @@ fi
 
 # theme settings
 # ZSH_THEME="juanghurtado"
-ZSH_THEME="powerlevel10k/powerlevel10k"
+# ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # omz path
 export ZSH="$HOME/.oh-my-zsh"
@@ -72,7 +72,7 @@ setopt no_beep
 # alias.zsh:
 #
 if [ `uname` = Darwin ]; then
-	alias ls='/usr/local/bin/gls --color=auto'
+	alias ls='/opt/homebrew/bin/gls --color=auto'
 else
 	alias ls='/bin/ls --color=auto'
 fi
@@ -223,8 +223,8 @@ export GPG_TTY=$(tty)
 export PGDATABASE=postgres
 
 path=(${HOME}/bin $path)
+path=(${HOME}/.docker/bin $path)
 export PATH
-export PATH=$PATH:~/.docker/bin
 
 #
 # keybindings.zsh:
@@ -298,3 +298,4 @@ eval "$(rbenv init -)"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+source ~/powerlevel10k/powerlevel10k.zsh-theme
