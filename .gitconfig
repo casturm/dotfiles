@@ -49,6 +49,7 @@
 
 	# Show files ignored by git:
 	ign = ls-files -o -i --exclude-standard
+	rebase-main = !git fetch origin && git rebase origin/main
 [branch]
 	autosetuprebase = remote
 [commit]
@@ -72,3 +73,7 @@
 [gpg]
 	program = /usr/local/bin/gpg
 
+[user]
+	email = chris.sturm@fidelitylife.com
+[init]
+	defaultBranch = main
