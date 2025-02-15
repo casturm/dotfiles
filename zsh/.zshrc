@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # Set umask
 umask g-w,o-rwx
 
@@ -45,7 +52,8 @@ if [[ ! -s ${ZDOTDIR:-${HOME}}/.config/zsh/cache/settings.zsh ]]; then
 fi
 
 # theme settings
-ZSH_THEME="juanghurtado"
+# ZSH_THEME="juanghurtado"
+# ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # omz path
 export ZSH="$HOME/.oh-my-zsh"
@@ -64,7 +72,7 @@ setopt no_beep
 # alias.zsh:
 #
 if [ `uname` = Darwin ]; then
-	alias ls='/usr/local/bin/gls --color=auto'
+	alias ls='/opt/homebrew/bin/gls --color=auto'
 else
 	alias ls='/bin/ls --color=auto'
 fi
@@ -119,19 +127,6 @@ for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
 	alias "$method"="lwp-request -m '$method'"
 done
 
-# Tmux
-alias tmux="TERM=xterm-256color tmux"
-alias tx="tmuxinator"
-alias mx="tmuxinator start mars"
-
-# Vericity
-alias flex_db_prod='psql -h database.cisprod.vericity.net -d flex_event_service_v2 -U csturm --password'
-alias flex_db_int='psql -h database.marsint.vericity.net -d flex_event_service_v2 -U flex --password'
-alias flex_db_qa='psql -h database.marsqa.vericity.net -d flex_event_service_v2 -U flex --password'
-alias nbx_db_prod='psql -h database.cisprod.vericity.net -d nbx -U csturm --password'
-alias nbx_db_int='psql -h database.marsint.vericity.net -d nbx -U nbx --password'
-alias nbx_db_qa='psql -h database.marsqa.vericity.net -d nbx -U nbx --password'
-#
 # completions.zsh:
 #
 # Completion
@@ -228,6 +223,7 @@ export GPG_TTY=$(tty)
 export PGDATABASE=postgres
 
 path=(${HOME}/bin $path)
+path=(${HOME}/.docker/bin $path)
 export PATH
 
 #
@@ -295,3 +291,11 @@ FAST_HIGHLIGHT_STYLES[history-expansion]='fg=blue'
 FAST_HIGHLIGHT_STYLES[assign]='none'
 
 eval "$(rbenv init -)"
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+source ~/powerlevel10k/powerlevel10k.zsh-theme
