@@ -66,6 +66,18 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
 
+  -- Required dependency for `nvim-dap-ui`
+  { 'nvim-neotest/nvim-nio' },
+
+  {
+    -- Debugging (DAP)
+    'mfussenegger/nvim-dap',
+    dependencies = {
+      'rcarriga/nvim-dap-ui',
+      'nvim-neotest/nvim-nio', -- Ensure nvim-nio is explicitly added
+    },
+  },
+
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
@@ -109,7 +121,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim',  opts = {} },
+  { 'folke/which-key.nvim', opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -222,10 +234,19 @@ require('lazy').setup({
   },
 
   {
-    'autozimu/LanguageClient-neovim',
+    -- LSP Configuration & Plugins
+    'neovim/nvim-lspconfig',
     dependencies = {
-      'nvim-neotest/nvim-nio'
-    }
+      -- Automatically install LSPs to stdpath for neovim
+      'williamboman/mason.nvim',
+      'williamboman/mason-lspconfig.nvim',
+
+      -- Useful status updates for LSP
+      { 'j-hui/fidget.nvim', opts = {} },
+
+      -- Additional lua configuration, makes nvim stuff amazing!
+      'folke/neodev.nvim',
+    },
   },
 
   {
@@ -523,7 +544,58 @@ end
 -- mason-lspconfig requires that these setup functions are called in this order
 -- before setting up the servers.
 require('mason').setup()
-require('mason-lspconfig').setup()
+require('mason-lspconfig').setup {
+  ensure_installed = { 'lua_ls', 'solargraph' }, -- Add any other LSPs you use
+}
+
+-- Function to attach LSP keybindings when LSP attaches to a buffer
+local on_attach = function(_, bufnr)
+  local nmap = function(keys, func, desc)
+    if desc then desc = 'LSP: ' .. desc end
+    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+  end
+
+  nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+  nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+  nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+  nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+  nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+  nmap('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+  nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
+  nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+
+  -- Format command
+  vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
+    vim.lsp.buf.format()
+  end, { desc = 'Format current buffer with LSP' })
+end
+
+-- LSP server setup
+local lspconfig = require('lspconfig')
+
+lspconfig.lua_ls.setup {
+  on_attach = on_attach,
+  settings = {
+    Lua = {
+      workspace = { checkThirdParty = false },
+      telemetry = { enable = false },
+    },
+  },
+}
+
+lspconfig.solargraph.setup {
+  on_attach = on_attach,
+  cmd = { os.getenv("HOME") .. "/.rbenv/shims/solargraph", 'stdio' },
+  settings = {
+    solargraph = {
+      completion = true,
+      diagnostic = true,
+      references = true,
+      rename = true,
+      symbols = true,
+    }
+  }
+}
 
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
