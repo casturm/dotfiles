@@ -205,7 +205,17 @@ export LESS_TERMCAP_ue=$'\E[0m'           # end underline
 export LESS_TERMCAP_us=$'\E[04;38;5;172m' # begin underline
 export LESS=-r
 
-[[ -z $TMUX ]] && export TERM="xterm-256color"
+# [[ -z $TMUX ]] && export TERM="xterm-256color"
+if [ -n "$SSH_CONNECTION" ]; then
+    # If inside an SSH session, set a safer TERM
+    export TERM="xterm-256color"
+elif [ -n "$TMUX" ]; then
+    # If inside tmux, use tmux-256color
+    export TERM="tmux-256color"
+else
+    # Default for local terminal
+    export TERM="xterm-256color"
+fi
 
 # Midnight commander wants this:
 export COLORTERM=truecolor
