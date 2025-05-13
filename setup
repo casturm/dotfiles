@@ -5,16 +5,14 @@ e_header()  { echo -e "\n\033[1m$@\033[0m"; }
 e_success() { echo -e " \033[1;32m✔\033[0m  $@"; }
 
 main () {
-  cd ~/dotfiles
-
   e_header "Applying dotfiles with stow..."
   for package in zsh neovim git tmux bash; do
-    stow -D $package  # Remove old symlinks
-    stow $package     # Apply new symlinks
+    stow -D -t $HOME $package  # Remove old symlinks
+    stow -t $HOME $package     # Apply new symlinks
   done
 
-  source $HOME/.config/zsh/functions.zsh
   e_header "Concatenating .config/zsh files into single file..."
+  source $HOME/.config/zsh/functions.zsh
   recreateCachedSettingsFile
   e_header "Compiling zsh files for increased speed..."
   compileAllTheThings
@@ -23,5 +21,3 @@ main () {
 }
 
 main "$@"
-
-

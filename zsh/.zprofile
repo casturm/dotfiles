@@ -80,9 +80,11 @@ fi
 
 [[ -e ~/.profile ]] && emulate sh -c 'source ~/.profile'
 
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Pyenv setup (for login shells)
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+eval "$(pyenv init --path)"
 
-# Setting PATH for Python 3.13
-# The original version is saved in .zprofile.pysave
-PATH="/Library/Frameworks/Python.framework/Versions/3.13/bin:${PATH}"
-export PATH
+eval "$(/opt/homebrew/bin/brew shellenv)"
+eval "$(rbenv init - --no-rehash zsh)"
