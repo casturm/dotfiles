@@ -3,8 +3,9 @@
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = '[P]roject [View] - runs vim command :Ex' })
-vim.keymap.set('n', '<leader>v', ':vsplit ', { noremap = true })
+-- NOTE: <leader>pv now opens oil.nvim instead of :Ex.
+--       See lua/custom/plugins/oil.lua
+vim.keymap.set('n', '<leader>v', ':vsplit ', { noremap = true, desc = 'Vertical split (type a path)' })
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
@@ -127,8 +128,6 @@ require('lazy').setup({
     },
   },
 
-  -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -259,21 +258,23 @@ require('lazy').setup({
   require 'kickstart.plugins.autoformat',
   require 'kickstart.plugins.debug',
 
-  -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
-  --    up-to-date with whatever is in the kickstart repo.
-  --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
+  -- Everything in `lua/custom/plugins/*.lua` is loaded automatically by this
+  -- line. Each file there returns one lazy.nvim plugin spec (or a list of
+  -- them). Add a plugin by dropping in a new file -- no edit needed here.
   --
-  --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
-  -- { import = 'custom.plugins' },
+  -- See: https://github.com/folke/lazy.nvim#-structuring-your-plugins
+  { import = 'custom.plugins' },
 }, {})
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
 
--- Set highlight on search
-vim.o.hlsearch = false
+-- Highlight search matches; <Esc> clears the highlight (mapped below).
+vim.o.hlsearch = true
+
+-- Keep this many lines of context above/below the cursor.
+vim.o.scrolloff = 8
 
 -- Make line numbers default
 vim.wo.number = true
@@ -314,6 +315,9 @@ vim.o.termguicolors = true
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
+
+-- Clear search highlight
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'Clear search highlight' })
 
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -538,16 +542,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
--- document existing key chains
--- require('which-key').register {
---   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
---   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
---   ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
---   ['<leader>h'] = { name = 'More git', _ = 'which_key_ignore' },
---   ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
---   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
---   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
--- }
+-- NOTE: leader key-chain names now live in `lua/custom/plugins/which-key.lua`
+-- (the old `.register()` API here was which-key v1).
 
 -- Enable the following language servers.
 --  Each entry is a full lspconfig server config (`cmd`, `settings`, `filetypes`, ...)
