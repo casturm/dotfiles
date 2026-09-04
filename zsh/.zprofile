@@ -80,11 +80,20 @@ fi
 
 [[ -e ~/.profile ]] && emulate sh -c 'source ~/.profile'
 
-# Pyenv setup (for login shells)
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-eval "$(pyenv init --path)"
-
+# Homebrew must come first: it is what puts /opt/homebrew/bin on PATH, and
+# that is where pyenv and rbenv actually live. Initialising them before this
+# line means `command -v` cannot find them and they are silently skipped.
 eval "$(/opt/homebrew/bin/brew shellenv)"
-eval "$(rbenv init - --no-rehash zsh)"
+
+# NOTE: no $PYENV_ROOT/bin on PATH -- pyenv is a Homebrew install here, so
+# ~/.pyenv holds only `versions` and `shims`; ~/.pyenv/bin does not exist.
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$HOME/.local/bin:$PATH"
+
+if command -v pyenv >/dev/null 2>&1; then
+  eval "$(pyenv init --path)"
+fi
+
+if command -v rbenv >/dev/null 2>&1; then
+  eval "$(rbenv init - --no-rehash zsh)"
+fi

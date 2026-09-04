@@ -300,7 +300,9 @@ FAST_HIGHLIGHT_STYLES[history-expansion]='fg=blue'
 
 FAST_HIGHLIGHT_STYLES[assign]='none'
 
-eval "$(rbenv init -)"
+# NOTE: rbenv (and pyenv) are initialised in .zprofile. Doing it again here
+# added a second ~/.rbenv/shims entry to PATH and discarded the --no-rehash
+# that .zprofile asks for.
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -308,5 +310,6 @@ eval "$(rbenv init -)"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-source ~/powerlevel10k/powerlevel10k.zsh-theme
+# NOTE: dropped a second `source ~/powerlevel10k/...` here; that directory
+# does not exist on this machine, so it errored on every shell start.
 source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
