@@ -46,7 +46,8 @@ return {
 
         -- Tsserver usually works poorly. Sorry you work with bad languages
         -- You can remove this line if you know what you're doing :)
-        if client.name == 'tsserver' then
+        -- NOTE: renamed from `tsserver` to `ts_ls` upstream.
+        if client.name == 'ts_ls' then
           return
         end
 

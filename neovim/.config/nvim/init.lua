@@ -28,11 +28,8 @@ vim.opt.wrap = false
 
 vim.opt.swapfile = false
 vim.opt.backup = false
-vim.opt.undofile = true
 
-vim.opt.termguicolors = true
-
-vim.opt.updatetime = 50
+-- NOTE: undofile, termguicolors and updatetime are set in the options block below.
 
 vim.opt.tags = '.tags'
 
@@ -40,13 +37,14 @@ function RTags()
   vim.cmd [[!ctags -f .tags --languages=ruby --exclude=.git -R .]]
 end
 
-vim.keymap.set("n", "rT", RTags)
+-- NOTE: was `rT`, which shadowed the built-in `r` operator (`rT` = replace char with T).
+vim.keymap.set('n', '<leader>rt', RTags, { desc = '[R]egenerate [T]ags (ctags, ruby)' })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system {
     'git',
     'clone',
@@ -99,9 +97,17 @@ require('lazy').setup({
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', opts = {} },
+    },
+  },
 
-      -- Additional lua configuration, makes nvim stuff amazing!
-      'folke/neodev.nvim',
+  {
+    -- Lua LSP support for the neovim config itself (replaces the archived neodev.nvim)
+    'folke/lazydev.nvim',
+    ft = 'lua',
+    opts = {
+      library = {
+        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+      },
     },
   },
 
@@ -184,8 +190,10 @@ require('lazy').setup({
     opts = {
       options = {
         icons_enabled = false,
-        -- theme = 'onedark',
-        theme = 'catppuccin',
+        -- NOTE: catppuccin dropped the plain `catppuccin` lualine theme; the name
+        -- below follows whichever flavour is active. Plain `catppuccin` silently
+        -- fell back to `auto`.
+        theme = 'catppuccin-nvim',
         component_separators = '|',
         section_separators = '',
       },
@@ -232,22 +240,6 @@ require('lazy').setup({
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
     build = ':TSUpdate',
-  },
-
-  {
-    -- LSP Configuration & Plugins
-    'neovim/nvim-lspconfig',
-    dependencies = {
-      -- Automatically install LSPs to stdpath for neovim
-      'williamboman/mason.nvim',
-      'williamboman/mason-lspconfig.nvim',
-
-      -- Useful status updates for LSP
-      { 'j-hui/fidget.nvim', opts = {} },
-
-      -- Additional lua configuration, makes nvim stuff amazing!
-      'folke/neodev.nvim',
-    },
   },
 
   {
@@ -328,17 +320,22 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+-- NOTE: nvim 0.11 maps ]d / [d by default; these keep the float open on jump.
+vim.keymap.set('n', '[d', function()
+  vim.diagnostic.jump { count = -1, float = true }
+end, { desc = 'Go to previous diagnostic message' })
+vim.keymap.set('n', ']d', function()
+  vim.diagnostic.jump { count = 1, float = true }
+end, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 -- [[ Highlight on yank ]]
--- See `:help vim.highlight.on_yank()`
+-- See `:help vim.hl.on_yank()`
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()
-    vim.highlight.on_yank()
+    vim.hl.on_yank()
   end,
   group = highlight_group,
   pattern = '*',
@@ -531,6 +528,16 @@ local on_attach = function(_, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 end
 
+-- Run `on_attach` whenever a language server attaches to a buffer.
+--  (Replaces passing `on_attach` to each server, which the new `vim.lsp.config`
+--   flow below doesn't do for us.)
+vim.api.nvim_create_autocmd('LspAttach', {
+  group = vim.api.nvim_create_augroup('UserLspAttach', { clear = true }),
+  callback = function(event)
+    on_attach(nil, event.buf)
+  end,
+})
+
 -- document existing key chains
 -- require('which-key').register {
 --   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
@@ -542,124 +549,61 @@ end
 --   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
 -- }
 
--- mason-lspconfig requires that these setup functions are called in this order
--- before setting up the servers.
-require('mason').setup()
-require('mason-lspconfig').setup {
-  ensure_installed = { 'lua_ls', 'solargraph' }, -- Add any other LSPs you use
-}
-
--- Function to attach LSP keybindings when LSP attaches to a buffer
-local on_attach = function(_, bufnr)
-  local nmap = function(keys, func, desc)
-    if desc then desc = 'LSP: ' .. desc end
-    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
-  end
-
-  nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-  nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-  nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-  nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-  nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-  nmap('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
-  nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-  nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
-
-  -- Format command
-  vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
-    vim.lsp.buf.format()
-  end, { desc = 'Format current buffer with LSP' })
-end
-
--- LSP server setup
-local lspconfig = require('lspconfig')
-
-lspconfig.lua_ls.setup {
-  on_attach = on_attach,
-  settings = {
-    Lua = {
-      workspace = { checkThirdParty = false },
-      telemetry = { enable = false },
-    },
-  },
-}
-
-lspconfig.solargraph.setup {
-  on_attach = on_attach,
-  cmd = { os.getenv("HOME") .. "/.rbenv/shims/solargraph", 'stdio' },
-  settings = {
-    solargraph = {
-      completion = true,
-      diagnostic = true,
-      references = true,
-      rename = true,
-      symbols = true,
-    }
-  }
-}
-
--- Enable the following language servers
---  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
---
---  Add any additional override configuration in the following tables. They will be passed to
---  the `settings` field of the server config. You must look up that documentation yourself.
---
---  If you want to override the default filetypes that your language server will attach to you can
---  define the property 'filetypes' to the map in question.
+-- Enable the following language servers.
+--  Each entry is a full lspconfig server config (`cmd`, `settings`, `filetypes`, ...)
+--  and gets merged over the shared defaults in the handler below.
+--  Anything listed here is installed automatically via mason.
 local servers = {
   -- clangd = {},
   -- gopls = {},
   -- pyright = {},
   -- rust_analyzer = {},
-  -- tsserver = {},
+  -- ts_ls = {},
   html = { filetypes = { 'html', 'twig', 'hbs' } },
   lua_ls = {
-    Lua = {
-      workspace = { checkThirdParty = false },
-      telemetry = { enable = false },
-      -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-      -- diagnostics = { disable = { 'missing-fields' } },
+    settings = {
+      Lua = {
+        workspace = { checkThirdParty = false },
+        telemetry = { enable = false },
+        -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+        -- diagnostics = { disable = { 'missing-fields' } },
+      },
     },
   },
   solargraph = {
-    cmd = { os.getenv("HOME") .. "/.rbenv/shims/solargraph", 'stdio' },
-    --root_dir = vim.lsp.util.root_pattern("Gemfile", ".git", "."),
+    cmd = { os.getenv 'HOME' .. '/.rbenv/shims/solargraph', 'stdio' },
     settings = {
       solargraph = {
-        --autoformat = true,
         completion = true,
         diagnostic = true,
         references = true,
         rename = true,
-        symbols = true
-      }
-    }
+        symbols = true,
+      },
+    },
   },
 }
-
--- Setup neovim lua configuration
-require('neodev').setup()
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
--- Ensure the servers above are installed
-local mason_lspconfig = require 'mason-lspconfig'
+-- Defaults merged into every server config.
+vim.lsp.config('*', { capabilities = capabilities })
 
-mason_lspconfig.setup {
+-- Per-server overrides from the `servers` table above.
+for server_name, config in pairs(servers) do
+  vim.lsp.config(server_name, config)
+end
+
+-- mason must be set up before mason-lspconfig.
+require('mason').setup()
+
+-- mason-lspconfig v2 has no `setup_handlers`; with `automatic_enable` (the default)
+-- it calls `vim.lsp.enable()` for every installed server, picking up the
+-- `vim.lsp.config` entries above.
+require('mason-lspconfig').setup {
   ensure_installed = vim.tbl_keys(servers),
-}
-
-mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-      filetypes = (servers[server_name] or {}).filetypes,
-    }
-  end,
 }
 
 -- [[ Configure nvim-cmp ]]
@@ -708,6 +652,9 @@ cmp.setup {
     end, { 'i', 's' }),
   },
   sources = {
+    -- lazydev completes neovim/plugin APIs in lua files; group_index 0 skips
+    -- asking lua_ls for the same results.
+    { name = 'lazydev', group_index = 0 },
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
   },
