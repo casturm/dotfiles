@@ -45,12 +45,6 @@ if [ -s ${ZDOTDIR:-${HOME}}/.dircolors ]; then
 	fi
 fi
 
-# Load settings
-if [[ ! -s ${ZDOTDIR:-${HOME}}/.config/zsh/cache/settings.zsh ]]; then
-	source ${ZDOTDIR:-${HOME}}/.config/zsh/functions.zsh
-	recreateCachedSettingsFile
-fi
-
 # theme settings
 # ZSH_THEME="juanghurtado"
 # ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -60,7 +54,6 @@ export ZSH="$HOME/.oh-my-zsh"
 
 # source omz
 source $ZSH/oh-my-zsh.sh
-# source ${ZDOTDIR:-${HOME}}/.config/zsh/cache/settings.zsh
 alias z='echo dood'
 
 # Remove whitespace after the RPROMPT
@@ -184,6 +177,11 @@ zstyle ':completion:*:history-words' stop yes
 zstyle ':completion:*:history-words' remove-all-dups yes
 zstyle ':completion:*:history-words' list false
 zstyle ':completion:*:history-words' menu yes
+
+# ngrok completion (uses compdef, so must come after oh-my-zsh runs compinit)
+if command -v ngrok &>/dev/null; then
+	eval "$(ngrok completion)"
+fi
 #
 # env.zsh:
 #
@@ -235,6 +233,20 @@ export PGDATABASE=postgres
 path=(${HOME}/bin $path)
 path=(${HOME}/.docker/bin $path)
 export PATH
+
+#
+# functions:
+#
+# Gather external ip address
+exip () {
+	e_header "Current External IP: "
+	curl -s -m 5 http://ipv4.myip.dk/api/info/IPv4Address | sed -e 's/"//g'
+}
+
+# Determine local IP address
+ips () {
+	ifconfig | grep "inet " | awk '{ print $2 }'
+}
 
 #
 # keybindings.zsh:

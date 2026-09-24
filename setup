@@ -11,12 +11,6 @@ main () {
     stow -t $HOME $package     # Apply new symlinks
   done
 
-  e_header "Concatenating .config/zsh files into single file..."
-  source $HOME/.config/zsh/functions.zsh
-  recreateCachedSettingsFile
-  e_header "Compiling zsh files for increased speed..."
-  compileAllTheThings
-
   e_success "Dotfiles setup complete!"
 }
 
