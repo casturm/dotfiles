@@ -52,8 +52,6 @@
 	rebase-main = !git fetch origin && git rebase origin/main
 [branch]
 	autosetuprebase = remote
-[commit]
-	template = ~/.gitmessage.txt
 [diff "spaceman-diff"]
   command = ~/bin/spaceman-diff
 [difftool]
